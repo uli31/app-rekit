@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources >
+
+    <string name="app_name">My Smart TV App</string>
+    <string name="btn_select_date">Select Date</string>
+    <string name="btn_reset">Reset</string>
+    <string name="select_date">Select a date to start counting</string>
+    <string name="time_remaining">tiempo restante: %d days</string>
+    <string name="selected_date">Selected Date: %s</string>
+    <string name="btn_start_text">Start</string>
+
+    <string name="string" />
+
+
+</resources>
