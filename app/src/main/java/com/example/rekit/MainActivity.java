@@ -7,13 +7,12 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
+
+
 import androidx.fragment.app.FragmentActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends FragmentActivity {
@@ -66,7 +65,7 @@ public class MainActivity extends FragmentActivity {
                 selectedDate.set(Calendar.MONTH, month);
                 selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+                SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("es", "ES"));
                 String selectedDateString = sdf.format(selectedDate.getTime());
                 txtSelectedDate.setText(getString(R.string.selected_date, selectedDateString));
              }
@@ -128,12 +127,12 @@ public class MainActivity extends FragmentActivity {
             long timeDifference = nextChangeDate.getTimeInMillis() - currentDate.getTimeInMillis();
             int daysRemaining = (int) (timeDifference / (24 * 60 * 60 * 1000));
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("es", "ES"));
             String nextChangeDateString = sdf.format(nextChangeDate.getTime());
 
             txtTimeRemaining.setText(getString(R.string.time_remaining, daysRemaining));
             txtTimeRemaining.setVisibility(View.VISIBLE);
-            txtSelectedDate.setText(getString(R.string.selected_date, nextChangeDateString));
+            txtSelectedDate.setText(nextChangeDateString);
         } else {
             txtTimeRemaining.setVisibility(View.GONE);
         }
