@@ -34,6 +34,7 @@
         android:layout_marginStart="312dp"
         android:layout_marginTop="452dp"
         android:layout_marginEnd="319dp"
+        android:padding="5dp"
         android:background="#FFFFFF"
         android:text="@string/select_date"
         android:textColor="#E7267E"
