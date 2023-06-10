@@ -1,13 +1,13 @@
 package com.example.rekit;
 
 import android.app.DatePickerDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
-
-
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -22,9 +22,13 @@ public class MainActivity extends FragmentActivity {
     private TextView txtCounter;
     private TextView txtSelectedDate;
     private TextView txtTimeRemaining;
+    private SharedPreferences sharedPreferences;
 
     private int counter = 0;
     private Calendar selectedDate;
+
+    private Handler handler;
+    private Runnable counterRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,8 @@ public class MainActivity extends FragmentActivity {
         txtCounter = findViewById(R.id.txt_counter);
         txtSelectedDate = findViewById(R.id.txt_selected_date);
         txtTimeRemaining = findViewById(R.id.txt_time_remaining);
+
+        sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +60,15 @@ public class MainActivity extends FragmentActivity {
                 resetCount();
             }
         });
+
+        handler = new Handler();
+        counterRunnable = new Runnable() {
+            @Override
+            public void run() {
+                updateCounter();
+                handler.postDelayed(this, 5 * 60 * 1000); // Llamar cada 5 minutos
+            }
+        };
     }
 
     private void showDatePicker() {
@@ -68,7 +83,7 @@ public class MainActivity extends FragmentActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("es", "ES"));
                 String selectedDateString = sdf.format(selectedDate.getTime());
                 txtSelectedDate.setText(getString(R.string.selected_date, selectedDateString));
-             }
+            }
         };
 
         Calendar currentDate = Calendar.getInstance();
@@ -97,6 +112,10 @@ public class MainActivity extends FragmentActivity {
         updateCounter();
 
         btnStart.setEnabled(false);
+
+        // Iniciar la actualización del contador cada 5 minutos
+        handler.removeCallbacks(counterRunnable); // Asegurarse de eliminar cualquier programación previa
+        handler.post(counterRunnable);
     }
 
     private void resetCount() {
@@ -105,12 +124,14 @@ public class MainActivity extends FragmentActivity {
         updateCounter();
         txtSelectedDate.setText(getString(R.string.select_date));
         btnStart.setEnabled(true);
+
+        // Detener la actualización del contador
+        handler.removeCallbacks(counterRunnable);
     }
 
     private void updateCounter() {
         txtCounter.setText(String.valueOf(counter));
 
-        if (selectedDate != null) {
             Calendar currentDate = Calendar.getInstance();
             currentDate.set(Calendar.HOUR_OF_DAY, 0);
             currentDate.set(Calendar.MINUTE, 0);
@@ -124,17 +145,18 @@ public class MainActivity extends FragmentActivity {
             nextChangeDate.set(Calendar.SECOND, 0);
             nextChangeDate.set(Calendar.MILLISECOND, 0);
 
+            // Verificar si ha pasado un día completo o si es exactamente la medianoche
+            if (currentDate.after(nextChangeDate) || currentDate.equals(nextChangeDate)) {
+                counter++;  // Incrementar el contador
+                updateCounter(); // Actualizar la pantalla con el nuevo valor del contador
+            }
+
             long timeDifference = nextChangeDate.getTimeInMillis() - currentDate.getTimeInMillis();
             int daysRemaining = (int) (timeDifference / (24 * 60 * 60 * 1000));
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("es", "ES"));
             String nextChangeDateString = sdf.format(nextChangeDate.getTime());
 
-            txtTimeRemaining.setText(getString(R.string.time_remaining, daysRemaining));
-            txtTimeRemaining.setVisibility(View.VISIBLE);
-            txtSelectedDate.setText(nextChangeDateString);
-        } else {
-            txtTimeRemaining.setVisibility(View.GONE);
-        }
+            // Resto del código del método updateCounter
     }
 }
